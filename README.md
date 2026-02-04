@@ -164,10 +164,10 @@ Display weekly session usage:
 ### Example Output
 
 ```bash
-# Shows your current burn rate
+# Normal mode: Shows sustainable consumption rate
 5-hour: 75% ▓▓▓▓▓▓▓░░░ 2h 30m left (4.5%/h)
 
-# Smart format toggle to display if your burn rate is ...
+# Alert mode: Shows ETA when you'll hit limit before session ends  
 5-hour: 75% ▓▓▓▓▓▓▓░░░ 2h 30m left (hit in 1h 15m)
 
 # Weekly usage output can be configured separately
