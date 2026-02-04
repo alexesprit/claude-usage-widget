@@ -93,9 +93,9 @@ You can also manually create or edit the config file at the shown location. Exam
 | `organization_id` | `CLAUDE_CODE_USAGE_ORGANIZATION_ID` | Required | Claude organization ID |
 | `cache_expiry_seconds` | `CLAUDE_CODE_USAGE_CACHE_EXPIRY_SECONDS` | 60 | Cache validity in seconds |
 | `verbose` | `CLAUDE_CODE_USAGE_VERBOSE` | false | Enable verbose output |
-| `debug` | `USAGE_DEBUG` | false | Enable debug logging |
-| `config_file` | `USAGE_CONFIG_FILE` | Auto-detected | Path to config file |
-| `cache_file` | `USAGE_CACHE_FILE` | Auto-detected | Path to cache file |
+| `debug` | `CLAUDE_CODE_USAGE_DEBUG` | false | Enable debug logging |
+| `config_file` | `CLAUDE_CODE_USAGE_CONFIG_FILE` | Auto-detected | Path to config file |
+| `cache_file` | `CLAUDE_CODE_USAGE_CACHE_FILE` | Auto-detected | Path to cache file |
 
 ### Obtaining Credentials
 
@@ -268,7 +268,7 @@ make test
 
 Enable debug logging:
 ```bash
-export USAGE_DEBUG=true
+export CLAUDE_CODE_USAGE_DEBUG=true
 ./usage --verbose --5h
 ```
 

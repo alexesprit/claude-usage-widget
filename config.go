@@ -92,13 +92,13 @@ func LoadConfig() (*Config, error) {
 			return "cache_expiry_seconds"
 		case "CLAUDE_CODE_USAGE_VERBOSE":
 			return "verbose"
-		case "USAGE_CONFIG_FILE":
+		case "CLAUDE_CODE_USAGE_CONFIG_FILE":
 			return "config_file"
-		case "USAGE_CACHE_FILE":
+		case "CLAUDE_CODE_USAGE_CACHE_FILE":
 			return "cache_file"
-		case "USAGE_LOCK_FILE":
+		case "CLAUDE_CODE_USAGE_LOCK_FILE":
 			return "lock_file"
-		case "USAGE_DEBUG":
+		case "CLAUDE_CODE_USAGE_DEBUG":
 			return "debug"
 		default:
 			return ""
@@ -170,7 +170,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	// Handle string to bool conversion for debug
-	if debugStr := os.Getenv("USAGE_DEBUG"); debugStr != "" {
+	if debugStr := os.Getenv("CLAUDE_CODE_USAGE_DEBUG"); debugStr != "" {
 		if debug, err := strconv.ParseBool(debugStr); err == nil {
 			config.Debug = debug
 		}

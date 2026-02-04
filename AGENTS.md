@@ -118,7 +118,7 @@ One main package with files grouped by functionality:
 4. Build and test manually
 
 ### Debugging Issues
-1. Enable debug logging: `export USAGE_DEBUG=true`
+1. Enable debug logging: `export CLAUDE_CODE_USAGE_DEBUG=true`
 2. Use verbose output: `--verbose` flag
 3. Check API responses and error messages
 

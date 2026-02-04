@@ -646,13 +646,13 @@ func TestLoadConfig(t *testing.T) {
 	// Test loading config with environment variables
 	os.Setenv("CLAUDE_CODE_USAGE_SESSION_KEY", "test_session")
 	os.Setenv("CLAUDE_CODE_USAGE_ORGANIZATION_ID", "test_org")
-	os.Setenv("USAGE_DEBUG", "true")
+	os.Setenv("CLAUDE_CODE_USAGE_DEBUG", "true")
 	os.Setenv("CLAUDE_CODE_USAGE_CACHE_EXPIRY_SECONDS", "30")
 
 	defer func() {
 		os.Unsetenv("CLAUDE_CODE_USAGE_SESSION_KEY")
 		os.Unsetenv("CLAUDE_CODE_USAGE_ORGANIZATION_ID")
-		os.Unsetenv("USAGE_DEBUG")
+		os.Unsetenv("CLAUDE_CODE_USAGE_DEBUG")
 		os.Unsetenv("CLAUDE_CODE_USAGE_CACHE_EXPIRY_SECONDS")
 	}()
 
