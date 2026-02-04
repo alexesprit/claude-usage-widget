@@ -2,6 +2,10 @@
 
 A Go-based CLI tool for monitoring Claude AI usage with progress bars, burn rate predictions, and customizable display formats.
 
+![Screenshot](screenshot.png)
+
+*The CLI widget executed by ccstatusline with two separate widgets. Colors are applied by ccstatusline mechanisms.*
+
 ## Features
 
 - **Real-time Usage Monitoring**: Fetch current usage from Claude AI API
