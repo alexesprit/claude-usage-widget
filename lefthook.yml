@@ -1,0 +1,47 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: go-fmt
+      run: go fmt ./...
+
+    - name: go-vet
+      run: go vet ./...
+
+    - name: go-test
+      run: go test ./...
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: go-mod-tidy
+      run: go mod tidy
+
+    - name: go-mod-verify
+      run: go mod verify
+
+    - name: go-vet
+      run: go vet ./...
+
+    - name: go-test
+      run: go test -v ./...
+
+    - name: go-fmt-check
+      run: |
+        unformatted=$(gofmt -s -l .)
+        if [ -n "$unformatted" ]; then
+          echo "❌ Code is not formatted. Run 'go fmt ./...' to fix."
+          echo "$unformatted"
+          exit 1
+        fi
+
+    - name: goimports-check
+      run: |
+        unformatted_imports=$(goimports -l .)
+        if [ -n "$unformatted_imports" ]; then
+          echo "❌ Imports are not formatted. Run 'goimports -w .' to fix."
+          echo "$unformatted_imports"
+          exit 1
+        fi
+
+    - name: go-build
+      run: go build -ldflags="-s -w" -o usage .
