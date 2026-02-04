@@ -121,14 +121,11 @@ To get the required `session_key` and `organization_id`, you'll need to extract 
 
 This is your `session_key`.
 
-#### Step 4: Extract Organization ID
+#### Step 4: Get Organization ID
 
-1. While still in the browser with Claude AI open, make a request to the Claude API to see your organization ID
-2. In Developer Tools, go to the **Network** tab
-3. Refresh the page or navigate within claude.ai
-4. Look for any API requests to `claude.ai/api/`
-5. Find a request like `GET /api/organizations/YOUR_ORG_ID/usage`
-6. The `YOUR_ORG_ID` part in the URL is your `organization_id`
+1. Navigate to your [account settings page](https://claude.ai/settings/account)
+2. Your organization ID will be displayed on this page
+3. Copy the organization ID value
 
 #### Step 5: Configure the Tool
 
@@ -166,9 +163,15 @@ Display weekly session usage:
 
 ### Example Output
 
-```
-5-hour: 75% ▓▓▓▓▓▓▓░░░ 2h 30m left hit in 1h 15m
-Weekly: 25% ▓▓░░░░░░░░ 5d 12h left 2.3%/d
+```bash
+# Shows your current burn rate
+5-hour: 75% ▓▓▓▓▓▓▓░░░ 2h 30m left (4.5%/h)
+
+# Smart format toggle to display if your burn rate is ...
+5-hour: 75% ▓▓▓▓▓▓▓░░░ 2h 30m left (hit in 1h 15m)
+
+# Weekly usage output can be configured separately
+Weekly: 25% ▓▓░░░░░░░░ 2.3%/d
 ```
 
 ### Output Format Templates
@@ -183,10 +186,12 @@ The output format is controlled by templates with placeholders:
 
 ### Burn Rate Predictions
 
-The tool calculates burn rate predictions:
+The tool calculates burn rate predictions with smart format switching:
 
-- **High burn rate**: Shows time until hitting 100% (e.g., "hit in 1h 15m")
-- **Moderate burn rate**: Shows consumption rate (e.g., "2.3%/d" for weekly, "1.5%/h" for 5-hour)
+- **Smart ETA Mode**: When your current burn rate would hit the 100% limit before the current session window expires, it displays "hit in Xh Ym" (e.g., "hit in 1h 15m")
+- **Normal Burn Rate**: When your usage is sustainable within the current window, it shows the hourly/daily consumption rate (e.g., "4.5%/h" for 5-hour sessions, "2.3%/d" for weekly sessions)
+
+This smart switching helps you quickly identify when you need to slow down vs. when your usage is within normal limits.
 
 ## Status Bar Integration
 
