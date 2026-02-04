@@ -1,0 +1,183 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*-*-*.**'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.25.6'
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Tidy dependencies
+      run: go mod tidy
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Run tests
+      run: go test ./...
+
+    - name: Create release directory
+      run: mkdir -p dist
+
+    - name: Build for Linux (amd64)
+      run: |
+        GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/usage-linux-amd64 .
+
+    - name: Build for Linux (arm64)
+      run: |
+        GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/usage-linux-arm64 .
+
+    - name: Build for macOS (amd64)
+      run: |
+        GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/usage-darwin-amd64 .
+
+    - name: Build for macOS (arm64)
+      run: |
+        GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/usage-darwin-arm64 .
+
+    - name: Build for Windows (amd64)
+      run: |
+        GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o dist/usage-windows-amd64.exe .
+
+    - name: Build for Windows (arm64)
+      run: |
+        GOOS=windows GOARCH=arm64 go build -ldflags="-s -w" -o dist/usage-windows-arm64.exe .
+
+    - name: Create checksums
+      run: |
+        cd dist
+        sha256sum * > checksums.txt
+        cat checksums.txt
+
+    - name: Create GitHub release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          ## Release ${{ github.ref_name }}
+
+          ## Downloads
+
+          Pre-built binaries are available below for multiple platforms:
+
+          - **Linux (amd64)**: `usage-linux-amd64`
+          - **Linux (arm64)**: `usage-linux-arm64`
+          - **macOS (amd64)**: `usage-darwin-amd64`
+          - **macOS (arm64)**: `usage-darwin-arm64`
+          - **Windows (amd64)**: `usage-windows-amd64.exe`
+          - **Windows (arm64)**: `usage-windows-arm64.exe`
+
+          ## Installation
+
+          Download the appropriate binary for your platform, make it executable (on Unix systems), and place it in your PATH.
+
+          ### Linux/macOS
+          ```bash
+          chmod +x usage-<platform>
+          sudo mv usage-<platform> /usr/local/bin/usage
+          ```
+
+          ### Windows
+          Place the `.exe` file in a directory included in your PATH.
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux amd64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-linux-amd64
+        asset_name: usage-linux-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Linux arm64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-linux-arm64
+        asset_name: usage-linux-arm64
+        asset_content_type: application/octet-stream
+
+    - name: Upload macOS amd64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-darwin-amd64
+        asset_name: usage-darwin-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload macOS arm64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-darwin-arm64
+        asset_name: usage-darwin-arm64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Windows amd64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-windows-amd64.exe
+        asset_name: usage-windows-amd64.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Windows arm64 binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/usage-windows-arm64.exe
+        asset_name: usage-windows-arm64.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload checksums
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/checksums.txt
+        asset_name: checksums.txt
+        asset_content_type: text/plain
