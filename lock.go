@@ -88,6 +88,12 @@ func (fl *FileLock) ForceRelease() error {
 
 // AcquireLock is a convenience function that acquires a lock with default timeout
 func AcquireLock(lockFile string) (*FileLock, error) {
+	// First, try to clean up any stale locks
+	if err := CleanupStaleLocks(lockFile); err != nil {
+		// Log the error but don't fail - we can still try to acquire the lock
+		// This is typically not a fatal error
+	}
+
 	lock := NewFileLock(lockFile, 10*time.Second)
 	if err := lock.Acquire(); err != nil {
 		return nil, err
@@ -107,14 +113,14 @@ func ReleaseLock(lock *FileLock) error {
 func CleanupStaleLocks(lockFile string) error {
 	file, err := os.Open(lockFile)
 	if err != nil {
-		// Lock file doesn't exist
+		// Lock file doesn't exist, nothing to clean up
 		return nil
 	}
 	defer file.Close()
 
 	var pid int
 	if _, err := fmt.Fscanf(file, "%d", &pid); err != nil {
-		// Can't read PID, remove the lock file
+		// Can't read PID (file might be empty or corrupted), remove the lock file
 		return os.Remove(lockFile)
 	}
 
